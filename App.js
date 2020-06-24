@@ -1,19 +1,51 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider, useDispatch } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Menu from './src/Menu'
+import Screen from './src/Screen'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import store from './src/redux/store';
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === 'Home') {
+              iconName = focused ? 'ios-list-box' : 'ios-list';
+
+            } else if (route.name === '날봐요') {
+              iconName = focused ? 'ios-information-circle'
+                : 'ios-information-circle-outline';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+        }}
+
+      >
+        <Tab.Screen name="Home" component={Menu} />
+        <Tab.Screen name="날봐요" component={Screen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+export default RootApp = () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
+}
