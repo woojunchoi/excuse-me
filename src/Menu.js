@@ -1,53 +1,62 @@
 import React from 'react';
 import {
-    FlatList, StyleSheet, Text, View, TouchableHighlight, TextInput, Header
+    FlatList,
+    StyleSheet,
+    Text,
+    View,
+    TouchableHighlight,
+    TextInput,
+    Header
 } from 'react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import {
-    AdMobBanner
-} from 'expo-ads-admob';
-import { useSelector } from 'react-redux'
-
-
-
+import { AdMobBanner } from 'expo-ads-admob';
+import { useSelector } from 'react-redux';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 // let interstitial = "ca-app-pub-5748953601000444/2974902805"
-let banner = "ca-app-pub-5748953601000444/1661821134"
+let banner = 'ca-app-pub-5748953601000444/1661821134';
 
 export default function Menu(props) {
     React.useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', async () => {
-            await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+            await ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT_UP
+            );
         });
         return unsubscribe;
-
     }, [props.navigation]);
     const [list, setList] = React.useState([
-        { key: '주문할게요' },
-        { key: '계산서 주세요' },
-        { key: '물좀 주세요' }]);
+        { key: 'I want to order' },
+        { key: 'Bill please' },
+        { key: 'Can I get some water' }
+    ]);
     const [text, setText] = React.useState('');
 
-    console.log(useSelector(state => state)
-    )
     return (
         <View style={styles.container}>
-            <View style={{ borderBottomWidth: 1, borderColor: '#DDDDDD', marginBottom: 10 }}>
-                <Header
-                    leftComponent={{ icon: 'menu', color: '#fff' }}
-                    centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
-                    rightComponent={{ icon: 'home', color: '#fff' }}
+            <View style={styles.header}>
+                <Text style={styles.selectHeader}>Messages</Text>
+                <AntDesign
+                    style={styles.settingIcon}
+                    name="setting"
+                    size={24}
+                    color="black"
+                    onPress={() => props.navigation.navigate('Setting')}
                 />
+            </View>
+            <View style={styles.inputHeader}>
                 <TextInput
                     style={{ padding: 10, fontSize: 20 }}
-                    placeholder={'할말을 입력하세요'}
+                    placeholder={'Enter your message'}
                     value={text}
-                    onChangeText={text => setText(text)}
-                    onSubmitEditing={e => {
+                    onChangeText={(text) => setText(text)}
+                    onSubmitEditing={(e) => {
                         e.persist();
-                        setList(prev => [...prev, { key: e.nativeEvent.text }])
-                        setText('')
-                    }
-                    }
+                        setList((prev) => [
+                            ...prev,
+                            { key: e.nativeEvent.text }
+                        ]);
+                        setText('');
+                    }}
                 />
             </View>
             <FlatList
@@ -57,14 +66,34 @@ export default function Menu(props) {
                         <TouchableHighlight
                             underlayColor="#DDDDDD"
                             onPress={async () => {
-                                props.navigation.navigate('날봐요', { text: item.key, from: 'menu' });
+                                props.navigation.navigate('excuse_me', {
+                                    text: item.key,
+                                    from: 'menu'
+                                });
                             }}
                             key={item.key}>
-                            <View style={{ flex: 1, alginItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    alginItems: 'center',
+                                    justifyContent: 'space-around',
+                                    flexDirection: 'row'
+                                }}>
                                 <Text style={styles.item}>{item.key}</Text>
-                                <Text style={styles.xItem} onPress={e => setList(prev => [...prev].filter((el) => {
-                                    return el.key !== item.key;
-                                }))}>X</Text>
+
+                                <Ionicons
+                                    style={styles.xItem}
+                                    onPress={(e) =>
+                                        setList((prev) =>
+                                            [...prev].filter((el) => {
+                                                return el.key !== item.key;
+                                            })
+                                        )
+                                    }
+                                    name="ios-remove-circle-outline"
+                                    size={24}
+                                    color="black"
+                                />
                             </View>
                         </TouchableHighlight>
                     </View>
@@ -83,19 +112,32 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 50,
         flex: 1,
-        paddingTop: 22
+        paddingTop: 22,
+        flexDirection: 'column'
     },
-    sectionHeader: {
-        paddingTop: 2,
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingBottom: 2,
-        fontSize: 14,
+    header: {
+        padding: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    selectHeader: {
         fontWeight: 'bold',
-        backgroundColor: 'rgba(247,247,247,1.0)',
+        fontSize: 30
+    },
+    inputHeader: {
+        borderBottomWidth: 1,
+        borderColor: '#DDDDDD',
+        marginBottom: 10,
+        paddingLeft: 5
+    },
+    settingIcon: {
+        marginRight: 15
     },
     item: {
         padding: 10,
+        paddingLeft: 15,
         fontSize: 18,
         height: 44,
         flex: 0.9
@@ -106,8 +148,5 @@ const styles = StyleSheet.create({
         height: 44,
         flex: 0.1,
         justifyContent: 'center'
-    },
-    text: {
-        fontSize: 200
     }
-})
+});
